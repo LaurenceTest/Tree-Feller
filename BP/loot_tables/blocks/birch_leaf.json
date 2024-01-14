@@ -1,0 +1,81 @@
+{
+	"type": "minecraft:block",
+	"pools": [
+		{
+			"rolls": 1,
+			"conditions": [
+				{
+					"condition": "random_chance",
+					"chance": 0.05
+				}
+			],
+			"entries": [
+				{
+					"type": "item",
+					"name": "minecraft:sapling",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 0,
+								"max": 2
+							}
+						},
+						{
+							"function": "set_data",
+							"data": 2
+						}
+					]
+				}
+			]
+		},
+		{
+			"rolls": 1,
+			"conditions": [
+				{
+					"condition": "random_chance",
+					"chance": 0.02
+				}
+			],
+			"entries": [
+				{
+					"type": "item",
+					"name": "minecraft:stick",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 0,
+								"max": 1
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"rolls": 1,
+			"conditions": [
+				{
+					"condition": "random_chance",
+					"chance": 0.005
+				}
+			],
+			"entries": [
+				{
+					"type": "item",
+					"name": "minecraft:apple",
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 0,
+								"max": 1
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

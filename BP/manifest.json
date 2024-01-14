@@ -1,0 +1,63 @@
+{
+	"format_version": 2,
+	"metadata": {
+		"authors": [
+			"Wi"
+		],
+		"generated_with": {
+			"bridge": [
+				"2.7.10"
+			],
+			"dash": [
+				"github:bridge-core/dash-compiler#8fa35c73292f6382747d0f411fca26431a6d2c8e"
+			]
+		}
+	},
+	"header": {
+		"name": "Tree Feller",
+		"description": "Cuts down the entire tree when chopping",
+		"min_engine_version": [
+			1,
+			20,
+			50
+		],
+		"uuid": "677a3732-6d7b-4020-ae3d-10dc164f5913",
+		"version": [
+			1,
+			0,
+			0
+		]
+	},
+	"modules": [
+		{
+			"type": "data",
+			"uuid": "0d56a8f9-df43-4c6a-bff4-ef986e8f5cbb",
+			"version": [
+				1,
+				0,
+				0
+			]
+		},
+		{
+			"type": "script",
+			"language": "javascript",
+			"uuid": "9ec454d9-f70c-4dcc-adf8-58e3b7b0f110",
+			"entry": "scripts/main.js",
+			"version": [
+				1,
+				0,
+				0
+			]
+		}
+	],
+	"dependencies": [
+		{
+			"module_name": "@minecraft/server",
+			"version": "1.7.0"
+		},
+		{
+			"module_name": "@minecraft/server-ui",
+			"version": "1.1.0"
+		}
+	]
+}
