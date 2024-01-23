@@ -10,36 +10,26 @@ export class Vector {
 		{ x: -1, y: 0, z: -1 },
 		{ x: 0, y: 0, z: -1 },
 		{ x: 1, y: 0, z: -1 },
+		{ x: 0, y: 1, z: 0 },
+		{ x: 1, y: 1, z: 0 },
+		{ x: 1, y: 1, z: 1 },
+		{ x: 0, y: 1, z: 1 },
+		{ x: -1, y: 1, z: 1 },
+		{ x: -1, y: 1, z: 0 },
+		{ x: -1, y: 1, z: -1 },
+		{ x: 0, y: 1, z: -1 },
+		{ x: 1, y: 1, z: -1 },
 	];
-	static offset = {
-		north: { x: 1, y: 0, z: 0 },
-		north_east: { x: 1, y: 0, z: 1 },
-		east: { x: 0, y: 0, z: 1 },
-		south_east: { x: -1, y: 0, z: 1 },
-		south: { x: -1, y: 0, z: 0 },
-		south_west: { x: -1, y: 0, z: -1 },
-		west: { x: 0, y: 0, z: -1 },
-		north_west: { x: 1, y: 0, z: -1 },
-	};
 	constructor(x, y, z) {
-		try {
-			if (x.x && x.y && x.z) {
-				this.x = x.x;
-				this.y = x.y;
-				this.z = x.z;
-			} else if (!x || !y || !z) throw Error("Incomplete parameters");
-			this.x = x;
-			this.y = y;
-			this.z = z;
-		} catch (error) {
-			console.error(error);
-		}
+		this.x = x;
+		this.y = y;
+		this.z = z;
 	}
-	add(vector) {
+	static add(vector1, vector2) {
 		return {
-			x: this.x + vector.x,
-			y: this.y + vector.y,
-			z: this.z + vector.z,
+			x: vector1.x + vector2.x,
+			y: vector1.y + vector2.y,
+			z: vector1.z + vector2.z,
 		};
 	}
 	equals(vector) {
@@ -47,8 +37,29 @@ export class Vector {
 			this.x === vector.x && this.y === vector.y && this.z === vector.z
 		);
 	}
-	taxicab(vector) {
-		return this.x - vector.x - (this.y - vector.y) - (this.z - vector.z);
+	static taxicab(vector1, vector2) {
+		return (
+			Math.abs(vector1.x) -
+			Math.abs(vector2.x) +
+			(Math.abs(vector1.y) - Math.abs(vector2.y)) +
+			(Math.abs(vector1.z) - Math.abs(vector2.z))
+		);
+	}
+	//this is stressing me the hell out
+	static getProximity(radius = 1) {
+		let offset = [];
+		for (let x = -radius; x <= radius; x++) {
+			for (let y = -radius; y <= radius; y++) {
+				for (let z = -radius; z <= radius; z++) {
+					offset.push({
+						x: x,
+						y: y,
+						z: z,
+					});
+				}
+			}
+		}
+		return offset;
 	}
 }
 
@@ -70,6 +81,15 @@ export class Block {
 	}
 	static is(block, blockName, permutation) {
 		return block.permutation.matches(blockName, permutation);
+	}
+	static isBeta(block, blockName, permutation) {
+		let permTruth = true;
+		if (permutation)
+			Object.entries(permutation).forEach(([key, value]) => {
+				if (block.permutation.getState(key) !== value)
+					permTruth = false;
+			});
+		return block.typeId === `minecraft:${blockName}` && permTruth;
 	}
 	static equals(block1, block2) {
 		return new Vector(block1.location).equals(block2.location);
