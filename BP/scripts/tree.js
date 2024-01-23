@@ -1,6 +1,5 @@
-import { ItemStack, system, world, Block as B } from "@minecraft/server";
+import { ItemStack, system, world } from "@minecraft/server";
 import { Block, Vector } from "./beta";
-
 class Tree {
 	static woodTypes = [
 		"acacia",
@@ -12,10 +11,11 @@ class Tree {
 		"oak",
 		"spruce",
 	];
-	constructor(woodType, block, player) {
+	constructor(woodType, block, player, axe) {
 		this.wood = woodType + "_log";
 		this.type = woodType;
 		this.origin = block;
+		this.axe = axe;
 		this.dimension = block.dimension;
 		this.valid = false;
 		this.logs = new Set();
@@ -97,46 +97,64 @@ class Tree {
 		}
 	}
 	breakTree() {
-		system.run(() => this.breakLogs());
-		system.run(() => {
-			this.getLeavesBeta2();
-			// this.getLeavesBeta();
-			let logItem = new ItemStack(this.wood);
-			let logs = Array.from(this.logs);
-			// let leaves = Array.from(this.leaves);
-			// let leafCutInterval = system.runInterval(() => {
-			// 	let end = async () => {
-			// 		Block.destroy(
-			// 			this.strToLocation(leaves.pop()),
-			// 			this.dimension
-			// 		);
-			// 		this.source.runCommandAsync(
-			// 			`loot spawn ${this.source.location.x} ${this.source.location.y} ${this.source.location.z} loot "blocks/${this.type}_leaf" mainhand`
-			// 		);
-			// 	};
-			// 	if (leaves.length > 3) {
-			// 		end();
-			// 		end();
-			// 		end();
-			// 	} else if (leaves.length > 0) end();
-			// 	else system.clearRun(leafCutInterval);
-			// }, 1);
-			system.runTimeout(() => {
-				let logCutInterval = system.runInterval(() => {
-					if (logs.length > 0) {
-						const location = this.strToLocation(logs.shift());
-						Block.destroy(location, this.dimension);
-						this.dimension.spawnItem(logItem, this.source.location);
-						world.playSound("dig.wood", location);
-					} else {
-						this.source.setDynamicProperty("cutting", false);
-						system.clearRun(logCutInterval);
-					}
+		this.getLogs();
+		const axeDurabilityComponent = this.axe.getComponent("durability");
+		if (
+			axeDurabilityComponent.maxDurability -
+				axeDurabilityComponent.damage >
+			this.logs.size
+		) {
+			axeDurabilityComponent.damage += this.logs.size;
+			console.error(
+				axeDurabilityComponent.maxDurability -
+					axeDurabilityComponent.damage
+			);
+			this.source
+				.getComponent("inventory")
+				.container.setItem(this.source.selectedSlot, this.axe);
+			system.run(() => {
+				this.getLeavesBeta2();
+				// this.getLeavesBeta();
+				let logItem = new ItemStack(this.wood);
+				let logs = Array.from(this.logs);
+				// let leaves = Array.from(this.leaves);
+				// let leafCutInterval = system.runInterval(() => {
+				// 	let end = async () => {
+				// 		Block.destroy(
+				// 			this.strToLocation(leaves.pop()),
+				// 			this.dimension
+				// 		);
+				// 		this.source.runCommandAsync(
+				// 			`loot spawn ${this.source.location.x} ${this.source.location.y} ${this.source.location.z} loot "blocks/${this.type}_leaf" mainhand`
+				// 		);
+				// 	};
+				// 	if (leaves.length > 3) {
+				// 		end();
+				// 		end();
+				// 		end();
+				// 	} else if (leaves.length > 0) end();
+				// 	else system.clearRun(leafCutInterval);
+				// }, 1);
+				system.runTimeout(() => {
+					let logCutInterval = system.runInterval(() => {
+						if (logs.length > 0) {
+							const location = this.strToLocation(logs.shift());
+							Block.destroy(location, this.dimension);
+							this.dimension.spawnItem(
+								logItem,
+								this.source.location
+							);
+							world.playSound("dig.wood", location);
+						} else {
+							this.source.setDynamicProperty("cutting", false);
+							system.clearRun(logCutInterval);
+						}
+					});
 				});
 			});
-		});
+		}
 	}
-	breakLogs() {
+	getLogs() {
 		let stack = [];
 		stack.push(this.origin);
 

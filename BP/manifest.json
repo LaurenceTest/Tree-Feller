@@ -14,7 +14,7 @@
 		"description": "Cuts down the entire tree when chopping",
 		"min_engine_version": [1, 20, 50],
 		"uuid": "677a3732-6d7b-4020-ae3d-10dc164f5913",
-		"version": [1, 0, 0]
+		"version": [1, 0, 1]
 	},
 	"modules": [
 		{
