@@ -24,7 +24,7 @@ Tree.woodTypes.forEach((wood) => {
 				tree.validate();
 				player.setDynamicProperty("cutting", false);
 				if (tree.valid && !player.getDynamicProperty("cutting")) {
-					console.error("tree valid");
+					console.log("tree valid");
 					player.setDynamicProperty("cutting", true);
 					tree.breakTree();
 				}

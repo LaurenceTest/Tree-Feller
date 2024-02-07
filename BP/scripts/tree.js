@@ -105,36 +105,13 @@ class Tree {
 			this.logs.size
 		) {
 			axeDurabilityComponent.damage += this.logs.size;
-			console.error(
-				axeDurabilityComponent.maxDurability -
-					axeDurabilityComponent.damage
-			);
 			this.source
 				.getComponent("inventory")
 				.container.setItem(this.source.selectedSlot, this.axe);
 			system.run(() => {
 				this.getLeavesBeta2();
-				// this.getLeavesBeta();
 				let logItem = new ItemStack(this.wood);
 				let logs = Array.from(this.logs);
-				// let leaves = Array.from(this.leaves);
-				// let leafCutInterval = system.runInterval(() => {
-				// 	let end = async () => {
-				// 		Block.destroy(
-				// 			this.strToLocation(leaves.pop()),
-				// 			this.dimension
-				// 		);
-				// 		this.source.runCommandAsync(
-				// 			`loot spawn ${this.source.location.x} ${this.source.location.y} ${this.source.location.z} loot "blocks/${this.type}_leaf" mainhand`
-				// 		);
-				// 	};
-				// 	if (leaves.length > 3) {
-				// 		end();
-				// 		end();
-				// 		end();
-				// 	} else if (leaves.length > 0) end();
-				// 	else system.clearRun(leafCutInterval);
-				// }, 1);
 				system.runTimeout(() => {
 					let logCutInterval = system.runInterval(() => {
 						if (logs.length > 0) {
@@ -233,79 +210,6 @@ class Tree {
 				);
 			}
 		});
-	}
-
-	getLeaves() {
-		let queue = Array.from(this.logs);
-		let foreign = new Set();
-		let newLeaves = new Set();
-		let upperVicinity = Vector.offsetList;
-		upperVicinity.unshift({ x: 0, y: 0, z: 0 });
-
-		while (queue.length > 0) {
-			let block = this.dimension.getBlock(JSON.parse(queue.shift()));
-			let leaf = JSON.stringify(block.location);
-			Vector.offsetList.forEach((location) => {
-				let offset = block.offset(location);
-				if (Block.is(offset, this.leaf, this.leafPermutation)) {
-					leaf = JSON.stringify(offset.location);
-					if (!this.leaves.has(leaf)) {
-						this.leaves.add(leaf);
-						queue.push(leaf);
-					}
-				} else if (
-					Block.is(offset, this.wood) &&
-					!this.logs.has(JSON.stringify(offset.location))
-				) {
-					foreign.add(JSON.stringify(block.location));
-				}
-			});
-		}
-
-		this.leaves.forEach((value) => {
-			if (!foreign.has(value)) newLeaves.add(value);
-		});
-		this.leaves = newLeaves;
-	}
-
-	//This was written using the Beta API 1.8.0-beta because using block permutations are very slow
-	getLeavesBeta() {
-		let queue = Array.from(this.logs);
-		let foreign = new Set();
-		let newLeaves = new Set();
-		let upperVicinity = Vector.offsetList;
-		upperVicinity.unshift({ x: 0, y: 0, z: 0 });
-
-		while (queue.length > 0) {
-			let leaf = queue.pop();
-			let block = this.dimension.getBlock(this.strToLocation(leaf));
-			Vector.offsetList.forEach((location) => {
-				let offset = block.offset(location);
-				if (Block.isBeta(offset, this.leaf, this.leafPermutation)) {
-					leaf = this.locationToStr(offset.location);
-					if (!this.leaves.has(leaf)) {
-						this.leaves.add(leaf);
-						queue.push(leaf);
-					}
-				} else if (
-					Block.isBeta(offset, this.wood) &&
-					!this.logs.has(this.locationToStr(offset.location))
-				) {
-					foreign.add(this.locationToStr(block.location));
-				}
-			});
-			if (
-				Block.isBeta(block, this.leaf, this.leafPermutation) &&
-				Block.isBeta(block.below(), this.wood) &&
-				!this.logs.has(this.locationToStr(block.below().location))
-			)
-				foreign.add(this.locationToStr(block.location));
-		}
-
-		this.leaves.forEach((value) => {
-			if (!foreign.has(value)) newLeaves.add(value);
-		});
-		this.leaves = newLeaves;
 	}
 
 	strToLocation(string) {

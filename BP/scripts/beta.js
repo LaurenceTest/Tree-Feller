@@ -69,7 +69,8 @@ export class Block {
 		world
 			.getDimension(dimension)
 			.getBlock(location)
-			.setPermutation(BlockPermutation.resolve(block));
+			// .setPermutation(BlockPermutation.resolve(block));
+			.setType(block.typeId);
 	}
 	static replace(block, newBlockName) {
 		if (dimension) block = world.getDimension(dimension).getBlock(block);
@@ -77,7 +78,8 @@ export class Block {
 	}
 	static destroy(block, dimension) {
 		if (dimension) block = dimension.getBlock(block);
-		block.setPermutation(BlockPermutation.resolve("minecraft:air"));
+		// block.setPermutation(BlockPermutation.resolve("minecraft:air"));
+		block.setType("minecraft:air");
 	}
 	static is(block, blockName, permutation) {
 		return block.permutation.matches(blockName, permutation);
